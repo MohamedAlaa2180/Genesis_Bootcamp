@@ -3,13 +3,6 @@ using UnityEngine;
 
 public class PlayerStateMachine : MonoBehaviour
 {
-    #region Dependencies
-
-    private PlayerInputsHandler _playerInputsHandler;
-    private PlayerMovement _playerMovement;
-
-    #endregion Dependencies
-
     private PlayerState _currentState;
     private bool _isInitialized = false;
 
@@ -18,29 +11,18 @@ public class PlayerStateMachine : MonoBehaviour
 
     public PlayerMovingState MovingState { get; private set; }
 
-    // Public accessors
-    public PlayerInputsHandler PlayerInputsHandler => _playerInputsHandler;
-
-    public PlayerMovement PlayerMovement => _playerMovement;
     public PlayerState CurrentState => _currentState;
     public bool IsInitialized => _isInitialized;
 
-    public void Init(PlayerInputsHandler playerInputsHandler, PlayerMovement playerMovement)
+    #region Event Channels
+
+    [Header("Listen to Event Channels")]
+    [SerializeField] public BoolEventChannelSO OnPlayerMoving;
+
+    #endregion Event Channels
+
+    public void Init()
     {
-        _playerInputsHandler = playerInputsHandler;
-        _playerMovement = playerMovement;
-
-        if (_playerInputsHandler == null)
-        {
-            Debug.LogError("PlayerInputsHandler is null in PlayerStateMachine initialization");
-            return;
-        }
-        if (_playerMovement == null)
-        {
-            Debug.LogError("PlayerMovement is null in PlayerStateMachine initialization");
-            return;
-        }
-
         IdleState = new PlayerIdleState(this);
         MovingState = new PlayerMovingState(this);
 

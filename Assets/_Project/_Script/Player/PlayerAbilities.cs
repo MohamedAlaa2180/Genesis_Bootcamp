@@ -5,25 +5,26 @@ using UnityEngine;
 
 public class PlayerAbilities : MonoBehaviour
 {
-    private PlayerInputsHandler _playerInputsHandler;
-
     private Dictionary<AbilityKey, IAbility> _abilities = new Dictionary<AbilityKey, IAbility>();
 
     private bool _isInitialized = false;
 
     public bool IsInitialized => _isInitialized;
 
-    #region Events
+    #region Event Channels
 
-    public event Action<IAbility> OnAbilityActivated;
+    [Header("Broadcast on Event Channels")]
+    [SerializeField] private AbilityEventChannelSO OnAbilityActivated;
 
-    public event Action<IAbility> OnAbilityDeActivated;
+    [SerializeField] private AbilityEventChannelSO OnAbilityDeactivated;
 
-    #endregion Events
+    [Header("Listen to Event Channels")]
+    [SerializeField] private AbilityKeyEventChannelSO OnAbilityKeyTriggered;
 
-    public void Init(PlayerInputsHandler playerInputsHandler)
+    #endregion Event Channels
+
+    public void Init()
     {
-        _playerInputsHandler = playerInputsHandler;
         AddAbilities();
         _isInitialized = true;
     }
@@ -31,18 +32,12 @@ public class PlayerAbilities : MonoBehaviour
     private async void OnEnable()
     {
         await UniTask.WaitUntil(() => _isInitialized);
-        if (_playerInputsHandler != null)
-        {
-            _playerInputsHandler.OnAbilityButonTriggered += ActivateAbility;
-        }
+        OnAbilityKeyTriggered.OnEventRaised += ActivateAbility;
     }
 
     private void OnDisable()
     {
-        if (_playerInputsHandler != null)
-        {
-            _playerInputsHandler.OnAbilityButonTriggered -= ActivateAbility;
-        }
+        OnAbilityKeyTriggered.OnEventRaised -= ActivateAbility;
     }
 
     private void AddAbilities()
@@ -61,12 +56,12 @@ public class PlayerAbilities : MonoBehaviour
         if (!ability.IsActive)
         {
             _abilities[abilityKey].Activate();
-            OnAbilityActivated.Invoke(_abilities[abilityKey]);
+            OnAbilityActivated.RaiseEvent(_abilities[abilityKey]);
         }
         else
         {
             _abilities[abilityKey].Deactivate();
-            OnAbilityDeActivated.Invoke(_abilities[abilityKey]);
+            OnAbilityDeactivated.RaiseEvent(_abilities[abilityKey]);
         }
     }
 }

@@ -3,20 +3,22 @@ using UnityEngine;
 
 public class PlayerIdleState : PlayerState
 {
+    private bool _isPlayerMoving;
+
     public PlayerIdleState(PlayerStateMachine playerStateMachine) : base(playerStateMachine)
     {
     }
 
     public override void Enter()
     {
+        _playerStateMachine.OnPlayerMoving.OnEventRaised += SetIsPlayerMoving;
         // Logic for entering the idle state
         Debug.Log($"Entered {StateName}");
     }
 
     public override void Update()
     {
-        // Check for transition to moving state
-        if (_inputHandler.MovementInput.sqrMagnitude > INPUT_THRESHOLD_SQR)
+        if (_isPlayerMoving)
         {
             _playerStateMachine.ChangeState(_playerStateMachine.MovingState);
         }
@@ -26,5 +28,12 @@ public class PlayerIdleState : PlayerState
     {
         // Logic for exiting the idle state
         Debug.Log($"Exited {StateName}");
+
+        _playerStateMachine.OnPlayerMoving.OnEventRaised -= SetIsPlayerMoving;
+    }
+
+    private void SetIsPlayerMoving(bool isMoving)
+    {
+        _isPlayerMoving = isMoving;
     }
 }

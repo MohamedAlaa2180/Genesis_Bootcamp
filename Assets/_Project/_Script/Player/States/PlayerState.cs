@@ -8,18 +8,12 @@ public abstract class PlayerState
     
     protected PlayerStateMachine _playerStateMachine;
     
-    // Cached references for performance
-    protected PlayerInputsHandler _inputHandler;
-    protected PlayerMovement _movement;
-    
     // State info
     public string StateName { get; protected set; }
     
     public PlayerState(PlayerStateMachine playerStateMachine)
     {
         _playerStateMachine = playerStateMachine;
-        _inputHandler = _playerStateMachine.PlayerInputsHandler;
-        _movement = _playerStateMachine.PlayerMovement;
         StateName = GetType().Name;
     }
     

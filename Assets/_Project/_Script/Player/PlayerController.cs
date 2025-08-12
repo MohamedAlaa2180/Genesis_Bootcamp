@@ -115,20 +115,20 @@ public class PlayerController : MonoBehaviour
 
     private void InitializeMovement()
     {
-        _playerMovement.Init(_playerInput);
+        _playerMovement.Init();
     }
 
     private void InitializeStateMachine()
     {
-        _playerStateMachine.Init(_playerInput, _playerMovement);
+        _playerStateMachine.Init();
     }
 
     private void InitializeAbilities()
     {
-        _playerAbilities.Init(_playerInput);
+        _playerAbilities.Init();
     }
     private void InitializeVisuals()
     {
-        _playerVisuals.Init(_playerAbilities);
+        _playerVisuals.Init();
     }
 }

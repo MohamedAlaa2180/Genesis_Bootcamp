@@ -5,12 +5,16 @@ using UnityEngine.InputSystem;
 public class PlayerInputsHandler : MonoBehaviour
 {
     private PlayerControls _playerControls;
-    private Vector2 _movementInput;
 
-    public event Action OnJump;
-    public event Action<AbilityKey> OnAbilityButonTriggered;
+    #region Event Channels
 
-    public Vector2 MovementInput => _movementInput;
+    [Header("Broadcast on Event Channels")]
+    [SerializeField] private Vector2EventChannelSO OnMovement;
+    [SerializeField] private VoidEventChannelSO OnJump;
+
+    [SerializeField] private AbilityKeyEventChannelSO OnAbilityKeyTriggered;
+
+    #endregion Event Channels
 
     private void Awake()
     {
@@ -37,16 +41,16 @@ public class PlayerInputsHandler : MonoBehaviour
 
     private void SetJumpButtonEvent(InputAction.CallbackContext context)
     {
-        OnJump?.Invoke();
+        OnJump.RaiseEvent();
     }
 
     private void SetAbilityButtonEvent(InputAction.CallbackContext context, AbilityKey abilityKey)
     {
-        OnAbilityButonTriggered?.Invoke(abilityKey);
+        OnAbilityKeyTriggered.RaiseEvent(abilityKey);
     }
 
     private void SetMovementInput(InputAction.CallbackContext context)
     {
-        _movementInput = context.ReadValue<Vector2>();
+        OnMovement.RaiseEvent(context.ReadValue<Vector2>());
     }
 }

@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class PlayerVisuals : MonoBehaviour
 {
-    private PlayerAbilities _playerAbilities;
-
     [SerializeField] private Material _defaultMaterial;
     [SerializeField] private Material _invisibleMaterial;
 
@@ -13,29 +11,32 @@ public class PlayerVisuals : MonoBehaviour
     private bool _isInitialized = false;
     public bool IsInitialized => _isInitialized;
 
-    public void Init(PlayerAbilities playerAbilities)
+    public void Init()
     {
-        _playerAbilities = playerAbilities;
         _isInitialized = true;
     }
+
+    #region Event Channels
+
+    [Header("Listen to Event Channels")]
+    [SerializeField] private AbilityEventChannelSO OnAbilityActivated;
+
+    [SerializeField] private AbilityEventChannelSO OnAbilityDeactivated;
+
+    #endregion Event Channels
 
     private async void OnEnable()
     {
         await UniTask.WaitUntil(() => _isInitialized);
-        if (_playerAbilities != null)
-        {
-            _playerAbilities.OnAbilityActivated += HandleAbilityActivated;
-            _playerAbilities.OnAbilityDeActivated += HandleAbilityDeActivated; // Assuming you want to reset visuals on deactivation
-        }
+
+        OnAbilityActivated.OnEventRaised += HandleAbilityActivated;
+        OnAbilityDeactivated.OnEventRaised += HandleAbilityDeActivated; // Assuming you want to reset visuals on deactivation
     }
 
     private void OnDisable()
     {
-        if (_playerAbilities != null)
-        {
-            _playerAbilities.OnAbilityActivated -= HandleAbilityActivated;
-            _playerAbilities.OnAbilityDeActivated -= HandleAbilityDeActivated; // Assuming you want to reset visuals on deactivation
-        }
+        OnAbilityActivated.OnEventRaised -= HandleAbilityActivated;
+        OnAbilityDeactivated.OnEventRaised -= HandleAbilityDeActivated; // Assuming you want to reset visuals on deactivation
     }
 
     private void HandleAbilityActivated(IAbility ability)

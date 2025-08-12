@@ -261,6 +261,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e0fc4a79770cbc488a2016c706f2e84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnMovement: {fileID: 11400000, guid: 20aea49490fd5704b9d370abc434a329, type: 2}
+  OnJump: {fileID: 11400000, guid: 0a3a46b93647d134498cb29cef530160, type: 2}
+  OnAbilityKeyTriggered: {fileID: 11400000, guid: fbe63b4eae88c65448c6abfd949a1a02, type: 2}
 --- !u!114 &161948993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -274,6 +277,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _movementSettings: {fileID: 11400000, guid: 1ea17da5e27c65c43b8fc43173b88078, type: 2}
+  OnMovement: {fileID: 11400000, guid: 20aea49490fd5704b9d370abc434a329, type: 2}
+  OnJump: {fileID: 11400000, guid: 0a3a46b93647d134498cb29cef530160, type: 2}
 --- !u!114 &161948994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -302,6 +307,8 @@ MonoBehaviour:
   _defaultMaterial: {fileID: 2100000, guid: 6fd77a0515ab25046a5fe36c9856668a, type: 2}
   _invisibleMaterial: {fileID: 2100000, guid: 72eba1ba4d7c1cf4d93b31197dfdb5d7, type: 2}
   _renderer: {fileID: 161948988}
+  OnAbilityActivated: {fileID: 11400000, guid: 9b20eb1018b487c4781b78ab2cf12e57, type: 2}
+  OnAbilityDeactivated: {fileID: 11400000, guid: bd28c85bab9f0be47b921d6597cfaaf7, type: 2}
 --- !u!114 &161948996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,6 +321,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ecdbd87386a30f49886cee12ccbf63a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnAbilityActivated: {fileID: 11400000, guid: 9b20eb1018b487c4781b78ab2cf12e57, type: 2}
+  OnAbilityDeactivated: {fileID: 11400000, guid: bd28c85bab9f0be47b921d6597cfaaf7, type: 2}
+  OnAbilityKeyTriggered: {fileID: 11400000, guid: fbe63b4eae88c65448c6abfd949a1a02, type: 2}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0

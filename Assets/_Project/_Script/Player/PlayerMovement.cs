@@ -3,27 +3,32 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private PlayerInputsHandler _playerInputsHandler;
-
     private CharacterController _characterController;
 
     private const float _gravity = -9.81f;
     private float _verticalVelocity;
 
     private float _stickVelocity = -2f;
-    private Vector3 _movementInput;
+    private Vector3 _movement;
     private Vector3 _velocity;
     private bool _isGrounded;
+    private Vector2 _movementInput;
+
+    private bool _isMoving => _movementInput != Vector2.zero;
 
     [SerializeField] private PlayerMovementSettings _movementSettings;
 
-    public void Init(PlayerInputsHandler playerInputsHandler)
+    #region Event Channels
+    [Header("Broadcast on Event Channels")]
+    [SerializeField] private BoolEventChannelSO OnPlayerMoving;
+
+    [Header("Listen to Event Channels")]
+    [SerializeField] private Vector2EventChannelSO OnMovement;
+    [SerializeField] private VoidEventChannelSO OnJump;
+    #endregion Event Channels
+
+    public void Init()
     {
-        _playerInputsHandler = playerInputsHandler;
-        if(_playerInputsHandler == null)
-        {
-            Debug.LogError("PlayerInputsHandler is not assigned in PlayerMovement.");
-        }
         if (_movementSettings == null)
         {
             Debug.LogError("PlayerMovementSettings is not assigned in PlayerMovement.");
@@ -37,31 +42,35 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnEnable()
     {
-        if (_playerInputsHandler != null)
-        {
-            _playerInputsHandler.OnJump += Jump;
-        }
+        OnMovement.OnEventRaised += SetMovementInput;
+        OnJump.OnEventRaised += Jump;
     }
 
     private void OnDisable()
     {
-        if (_playerInputsHandler != null)
-        {
-            _playerInputsHandler.OnJump -= Jump;
-        }
+        OnMovement.OnEventRaised -= SetMovementInput;
+        OnJump.OnEventRaised -= Jump;
+    }
+
+    private void SetMovementInput(Vector2 movementInput)
+    {
+        _movementInput = movementInput;
+    }
+
+    private void Update()
+    {
+        Move();
     }
 
     public void Move()
     {
-        // Reuse existing Vector3 instead of creating new one
-        Vector2 inputVector = _playerInputsHandler.MovementInput;
-        _movementInput.x = inputVector.x;
-        _movementInput.y = 0;
-        _movementInput.z = inputVector.y;
+        _movement.x = _movementInput.x;
+        _movement.y = 0;
+        _movement.z = _movementInput.y;
         
         // Reuse velocity vector
-        _velocity.x = _movementInput.x * _movementSettings.MovementSpeed;
-        _velocity.z = _movementInput.z * _movementSettings.MovementSpeed;
+        _velocity.x = _movement.x * _movementSettings.MovementSpeed;
+        _velocity.z = _movement.z * _movementSettings.MovementSpeed;
 
         // Apply gravity
         if (_isGrounded)
@@ -79,6 +88,8 @@ public class PlayerMovement : MonoBehaviour
 
         // Cache ground state for next frame
         _isGrounded = _characterController.isGrounded;
+
+        OnPlayerMoving.RaiseEvent(_isMoving);
     }
 
     private void Jump()
