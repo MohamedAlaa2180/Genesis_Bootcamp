@@ -16,6 +16,9 @@ public class PlayerMovement : MonoBehaviour
     private bool _isGrounded;
 
     [SerializeField] private PlayerMovementSettings _movementSettings;
+    
+    // Speed modification system
+    private float _speedMultiplier = 1f;
 
     public void Init(PlayerInputsHandler playerInputsHandler)
     {
@@ -59,9 +62,10 @@ public class PlayerMovement : MonoBehaviour
         _movementInput.y = 0;
         _movementInput.z = inputVector.y;
         
-        // Reuse velocity vector
-        _velocity.x = _movementInput.x * _movementSettings.MovementSpeed;
-        _velocity.z = _movementInput.z * _movementSettings.MovementSpeed;
+        // Reuse velocity vector with speed multiplier
+        float effectiveSpeed = _movementSettings.MovementSpeed * _speedMultiplier;
+        _velocity.x = _movementInput.x * effectiveSpeed;
+        _velocity.z = _movementInput.z * effectiveSpeed;
 
         // Apply gravity
         if (_isGrounded)
@@ -89,4 +93,25 @@ public class PlayerMovement : MonoBehaviour
             _isGrounded = false;
         }
     }
+    
+    /// <summary>
+    /// Set speed multiplier for current movement
+    /// </summary>
+    public void SetSpeedMultiplier(float multiplier)
+    {
+        _speedMultiplier = Mathf.Max(0f, multiplier); // Prevent negative speeds
+    }
+    
+    /// <summary>
+    /// Reset speed to normal
+    /// </summary>
+    public void ResetSpeed()
+    {
+        _speedMultiplier = 1f;
+    }
+    
+    /// <summary>
+    /// Get current speed multiplier
+    /// </summary>
+    public float GetSpeedMultiplier() => _speedMultiplier;
 }

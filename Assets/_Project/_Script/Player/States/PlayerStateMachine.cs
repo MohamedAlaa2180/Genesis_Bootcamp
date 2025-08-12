@@ -25,6 +25,8 @@ public class PlayerStateMachine : MonoBehaviour
     public PlayerMovingState MovingState { get; private set; }
     
     public PlayerStunnedState StunnedState { get; private set; }
+    
+    public PlayerInvisibleState InvisibleState { get; private set; }
 
     // Public accessors
     public PlayerInputsHandler PlayerInputsHandler => _playerInputsHandler;
@@ -52,6 +54,7 @@ public class PlayerStateMachine : MonoBehaviour
         IdleState = new PlayerIdleState(this);
         MovingState = new PlayerMovingState(this);
         StunnedState = new PlayerStunnedState(this);
+        InvisibleState = new PlayerInvisibleState(this);
 
         _isInitialized = true;
     }
@@ -93,6 +96,16 @@ public class PlayerStateMachine : MonoBehaviour
         StunnedState.SetStunDuration(duration);
         ChangeState(StunnedState);
     }
+    
+    /// <summary>
+    /// Activate invisibility ability
+    /// </summary>
+    public void ActivateInvisibility(float duration, float speedMultiplier = 0.5f)
+    {
+        InvisibleState.SetInvisibilityDuration(duration);
+        InvisibleState.SetSpeedMultiplier(speedMultiplier);
+        ChangeState(InvisibleState);
+    }
 
     /// <summary>
     /// Force change state - bypasses normal state priorities (use carefully)
@@ -108,6 +121,6 @@ public class PlayerStateMachine : MonoBehaviour
     public bool CanTransitionToNormalState()
     {
         // If currently in a status effect state, don't allow normal transitions
-        return _currentState != StunnedState; // Add other status effect states here
+        return _currentState != StunnedState && _currentState != InvisibleState;
     }
 }
