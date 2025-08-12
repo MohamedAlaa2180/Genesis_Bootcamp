@@ -1,6 +1,12 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
+public enum StateType
+{
+    Normal,     // Idle, Moving - can be interrupted by status effects
+    StatusEffect // Stunned, Frozen, Sleeping - has priority over normal states
+}
+
 public class PlayerStateMachine : MonoBehaviour
 {
     #region Dependencies
@@ -17,6 +23,8 @@ public class PlayerStateMachine : MonoBehaviour
     public PlayerIdleState IdleState { get; private set; }
 
     public PlayerMovingState MovingState { get; private set; }
+    
+    public PlayerStunnedState StunnedState { get; private set; }
 
     // Public accessors
     public PlayerInputsHandler PlayerInputsHandler => _playerInputsHandler;
@@ -43,6 +51,7 @@ public class PlayerStateMachine : MonoBehaviour
 
         IdleState = new PlayerIdleState(this);
         MovingState = new PlayerMovingState(this);
+        StunnedState = new PlayerStunnedState(this);
 
         _isInitialized = true;
     }
@@ -74,5 +83,31 @@ public class PlayerStateMachine : MonoBehaviour
         _currentState = newState;
 
         _currentState.Enter();
+    }
+
+    /// <summary>
+    /// Apply stun effect to the player
+    /// </summary>
+    public void ApplyStun(float duration)
+    {
+        StunnedState.SetStunDuration(duration);
+        ChangeState(StunnedState);
+    }
+
+    /// <summary>
+    /// Force change state - bypasses normal state priorities (use carefully)
+    /// </summary>
+    public void ForceChangeState(PlayerState newState)
+    {
+        ChangeState(newState);
+    }
+    
+    /// <summary>
+    /// Check if we can transition to a normal state (not blocked by status effects)
+    /// </summary>
+    public bool CanTransitionToNormalState()
+    {
+        // If currently in a status effect state, don't allow normal transitions
+        return _currentState != StunnedState; // Add other status effect states here
     }
 }

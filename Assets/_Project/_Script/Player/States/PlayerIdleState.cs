@@ -15,10 +15,14 @@ public class PlayerIdleState : PlayerState
 
     public override void Update()
     {
-        // Check for transition to moving state
-        if (_inputHandler.MovementInput.sqrMagnitude > INPUT_THRESHOLD_SQR)
+        // Only transition if not blocked by status effects
+        if (_playerStateMachine.CanTransitionToNormalState())
         {
-            _playerStateMachine.ChangeState(_playerStateMachine.MovingState);
+            // Check for transition to moving state
+            if (_inputHandler.MovementInput.sqrMagnitude > INPUT_THRESHOLD_SQR)
+            {
+                _playerStateMachine.ChangeState(_playerStateMachine.MovingState);
+            }
         }
     }
 

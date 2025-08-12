@@ -24,17 +24,21 @@ public class PlayerMovingState : PlayerState
 
     public override void Update()
     {
-
-        // Execute movement logic first
-        _movement.Move();
-        
-        // Cache input for performance (single property access)
-        _cachedInput = _inputHandler.MovementInput;
-
-        // Check for transition to idle state
-        if (_cachedInput.sqrMagnitude <= INPUT_THRESHOLD_SQR)
+        // Only execute movement and transitions if not blocked by status effects
+        if (_playerStateMachine.CanTransitionToNormalState())
         {
-            _playerStateMachine.ChangeState(_playerStateMachine.IdleState);
+            // Execute movement logic first
+            _movement.Move();
+            
+            // Cache input for performance (single property access)
+            _cachedInput = _inputHandler.MovementInput;
+
+            // Check for transition to idle state
+            if (_cachedInput.sqrMagnitude <= INPUT_THRESHOLD_SQR)
+            {
+                _playerStateMachine.ChangeState(_playerStateMachine.IdleState);
+            }
         }
+        // If blocked by status effect, don't move at all
     }
 }
